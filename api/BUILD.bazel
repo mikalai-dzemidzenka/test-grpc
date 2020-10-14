@@ -1,23 +1,30 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+load("@golink//proto:proto.bzl", "go_proto_link")
 
 proto_library(
-    name = "hello_proto",
+    name = "api_proto",
     srcs = ["hello.proto"],
     visibility = ["//visibility:public"],
 )
 
 go_proto_library(
-    name = "hello_go_proto",
+    name = "api_go_proto",
     compilers = ["@io_bazel_rules_go//proto:go_grpc"],
     importpath = "test-grpc/api",
-    proto = ":hello_proto",
+    proto = ":api_proto",
     visibility = ["//visibility:public"],
 )
 
 go_library(
     name = "go_default_library",
-    embed = [":hello_go_proto"],
+    embed = [":api_go_proto"],
     importpath = "test-grpc/api",
     visibility = ["//visibility:public"],
+)
+
+go_proto_link(
+    name = "api_go_proto_link",
+    dep = ":api_go_proto",
+    version = "v1",
 )
